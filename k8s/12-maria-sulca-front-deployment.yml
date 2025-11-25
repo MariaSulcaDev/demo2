@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+     name: 12-maria-sulca-front-deployment
+     labels:
+          app: 12-maria-sulca-front
+spec:
+     replicas: 2
+     selector:
+          matchLabels:
+               app: 12-maria-sulca-front
+     template:
+          metadata:
+               labels:
+                    app: 12-maria-sulca-front
+          spec:
+               containers:
+                    - name: 12-maria-sulca-front
+                      image: mariasb/12-maria-sulca-front:latest
+                      imagePullPolicy: Always
+                      ports:
+                           - containerPort: 80
+                      env:
+                           - name: VITE_API_USERS_URL
+                             value: "http://maria-sulca-users-service:9083"
+                           - name: VITE_API_BASE_URL
+                             value: "http://maria-sulca-users-service:9083/api/v1"
+                      livenessProbe:
+                           httpGet:
+                                path: /
+                                port: 80
+                           initialDelaySeconds: 15
+                           periodSeconds: 10
+                           failureThreshold: 3
+                      readinessProbe:
+                           httpGet:
+                                path: /
+                                port: 80
+                           initialDelaySeconds: 10
+                           periodSeconds: 5
+                           failureThreshold: 3

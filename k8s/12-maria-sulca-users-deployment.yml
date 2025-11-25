@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+     name: 12-maria-sulca-users-deployment
+     labels:
+          app: 12-maria-sulca-users
+spec:
+     replicas: 2
+     selector:
+          matchLabels:
+               app: 12-maria-sulca-users
+     template:
+          metadata:
+               labels:
+                    app: 12-maria-sulca-users
+          spec:
+               containers:
+                    - name: 12-maria-sulca-users
+                      image: mariasb/12-maria-sulca-users:latest
+                      imagePullPolicy: IfNotPresent
+                      ports:
+                           - containerPort: 9083
+                      envFrom:
+                           - configMapRef:
+                                  name: 12-maria-sulca-config
+                           - secretRef:
+                                  name: 12-maria-sulca-secret
+                      env:
+                           - name: SERVER_PORT
+                             value: "9083"
+                           - name: SPRING_APPLICATION_NAME
+                             value: "vg-ms-users-management"
+                      livenessProbe:
+                           tcpSocket:
+                                port: 9083
+                           initialDelaySeconds: 60
+                           periodSeconds: 20
+                           failureThreshold: 3
+                      readinessProbe:
+                           tcpSocket:
+                                port: 9083
+                           initialDelaySeconds: 45
+                           periodSeconds: 10
+                           failureThreshold: 3

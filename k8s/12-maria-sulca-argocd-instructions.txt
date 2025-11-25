@@ -1,0 +1,21 @@
+Instalación y acceso a Argo CD (comandos — no es un manifiesto completo aquí):
+
+1) Crear namespace e instalar Argo CD con el manifest oficial:
+
+  kubectl create namespace argocd
+  kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+2) Exponer el Server (opciones):
+  - Port-forward:
+      kubectl -n argocd port-forward svc/argocd-server 8080:443
+    Luego abrir: https://localhost:8080
+
+  - Opción LoadBalancer (en cloud): exponer el `svc/argocd-server` como LoadBalancer o crear Ingress.
+
+3) Credenciales iniciales:
+  - usuario: admin
+  - password: (obtener con) kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
+
+4) Crear una App en Argo CD que apunte a un repo o carpeta con los manifiestos (`k8s/`) para hacer sync automático.
+
+Nota: si quieres, puedo crear también un `Application` de Argo CD en YAML apuntando al folder `k8s/`.

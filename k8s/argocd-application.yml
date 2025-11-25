@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+     name: 12-maria-sulca-app
+     namespace: argocd
+spec:
+     project: default
+
+     # Fuente: carpeta con manifiestos k8s
+     source:
+          repoURL: https://github.com/MariaSulcaDev/demo2.git # ⚠️ CAMBIAR
+          targetRevision: main
+          path: k8s
+
+     # Destino: namespace default
+     destination:
+          server: https://kubernetes.default.svc
+          namespace: default
+
+     # Sincronización automática
+     syncPolicy:
+          automated:
+               prune: true # Elimina recursos que ya no están en Git
+               selfHeal: true # Auto-corrige si hay cambios manuales
+          syncOptions:
+               - CreateNamespace=true
